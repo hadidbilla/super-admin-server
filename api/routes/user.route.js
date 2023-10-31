@@ -57,7 +57,7 @@ router.post('/signin', (req,res,next)=>{
 
 router.post('/signup', (req, res, next) => {
   console.log("res.body", req.body)
-  const {password, lastName, firstName, email} = req.body
+  const {password, lastName, firstName, email} = req.body.body
   bcrypt.hash(password, 10, (err, hash) => {
     if (err) {
       return res.status(500).json({
