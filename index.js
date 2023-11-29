@@ -1,27 +1,26 @@
-require('dotenv').config()
-const express = require('express')
-const index = express()
+require("dotenv").config();
+const express = require("express");
+const index = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const userRoutes = require("./api/routes/user.route")
+const userRoutes = require("./api/routes/user.route");
 
 const port = process.env.PORT || 6000;
-index.listen(port, () => {
-  console.log(`API listening on PORT ${port} `)
-})
 
-mongoose.connect("mongodb+srv://hadidbilla449:01749804707hb@cluster0.9xogebn.mongodb.net/?retryWrites=true&w=majority",{
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  retryWrites: true
-})
+mongoose.connect(
+  "mongodb+srv://hadidbilla449:01749804707hb@cluster0.9xogebn.mongodb.net/?retryWrites=true&w=majority",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    retryWrites: true,
+  }
+);
 
 mongoose.Promise = global.Promise;
 index.use(bodyParser.json());
-
+index.use(express.json());
 
 index.use((req, res, next) => {
-  console.log("called")
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
@@ -34,13 +33,12 @@ index.use((req, res, next) => {
   next();
 });
 
+index.use("/user", userRoutes);
+
 //root route
 index.get("/", (req, res) => {
-  res.send("Hello World");
+  res.send("Hello World!");
 });
-
-index.use("/user", userRoutes)
-
 
 index.use((req, res, next) => {
   const error = new Error("Not found");
@@ -52,8 +50,12 @@ index.use((error, req, res, next) => {
   res.status(error.status || 500);
   res.json({
     error: {
-      message: error.message
-    }
+      message: error.message,
+    },
   });
 });
 module.exports = index;
+
+index.listen(port, () => {
+  console.log(`API listening on PORT ${port} `);
+});
